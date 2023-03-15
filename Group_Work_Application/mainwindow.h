@@ -15,7 +15,22 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_actionAbout_triggered();
+
+    void on_actionHelp_triggered();
+
+    void on_actionExit_triggered();
+
+    void on_checkPassButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+
+    void hashFunction(QString password);
+
+    QSet<QString> commonHashes;
+
+    void loadCommonPasswords();
 };
 #endif // MAINWINDOW_H
