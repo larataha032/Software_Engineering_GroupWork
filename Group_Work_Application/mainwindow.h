@@ -32,5 +32,7 @@ private:
     QSet<QString> commonHashes;
 
     void loadCommonPasswords();
+
+    bool Requirements(QString password);
 };
 #endif // MAINWINDOW_H

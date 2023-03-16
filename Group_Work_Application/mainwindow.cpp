@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->PasswordBox->setEchoMode(QLineEdit::Password);
 
     loadCommonPasswords();
+
+    ui->Password_Length->setValue(15);//inital length of 15 characters
 }
 
 MainWindow::~MainWindow()
@@ -29,7 +31,7 @@ void MainWindow::loadCommonPasswords()
 {
 
     // Open the file that was downloaded from Github.
-    QFile file("C:/SE/Software_Engineering_GroupWork/Group_Work_Application/10-million-password-list-top-100000.txt");
+    QFile file("C:/Software_Engineering/Software_Engineering_GroupWork/Group_Work_Application/10-million-password-list-top-100000.txt");
 
     // This is used to open the file.
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -112,5 +114,42 @@ void MainWindow::on_checkPassButton_clicked()
     QString password = ui->PasswordBox->text();
 
     hashFunction(password);
+
+    if (Requirements(password) == true){
+        QMessageBox::information(this,tr("temp"),tr("If you are reading this, the password is solid :)"));
+    }
+}
+
+bool MainWindow::Requirements(QString password) {
+
+    int length = ui->Password_Length->value();//stores the required length of the password into a variable
+    int passlength = password.length(); //stores the actual length of the password into a variable
+
+    if (passlength < length){//checks if the password length is less than the required length
+        QMessageBox::warning(this, tr("Uh-Oh :("), tr("The password you entered is too short.\n"
+                                                     "Please enter a valid password."));
+        return false;
+    }
+
+    //Below is a list of regular expressions for capital letters, lowercase letters, numbers, and special characters.
+    //By creating these variables, we can check to see if the password contains any of these expressions. If it does,
+    //the function will return ture, if it doesnt, it will return false.
+    QRegularExpression Capital("[A-Z]");
+    QRegularExpression Lower("[a-z]");
+    QRegularExpression Number("\\d");
+    QRegularExpression SpecialCharacter("[!@#$%&*]");
+
+    bool Cap = password.contains(Capital);
+    bool Low = password.contains(Lower);
+    bool Num = password.contains(Number);
+    bool Special = password.contains(SpecialCharacter);
+
+    if (Cap == false || Low == false || Num == false || Special == false){
+        QMessageBox::warning(this, tr("Oopsies :("), tr("The password you entered did not meet the specified"
+                                             "requirements.\n''Please try again"));
+        return false;
+    }
+
+    return true;
 }
 
