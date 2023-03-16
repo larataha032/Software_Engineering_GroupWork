@@ -15,6 +15,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    QString logFilePath;
+
 private slots:
     void on_actionAbout_triggered();
 
@@ -23,6 +25,10 @@ private slots:
     void on_actionExit_triggered();
 
     void on_checkPassButton_clicked();
+
+    void logThis(QString messageToLog);
+
+    QString formatTime();
 
 private:
     Ui::MainWindow *ui;

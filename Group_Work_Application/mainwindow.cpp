@@ -3,6 +3,7 @@
 #include <QCryptographicHash>
 #include <QFile>
 #include <QMessageBox>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,6 +18,10 @@ MainWindow::MainWindow(QWidget *parent)
     loadCommonPasswords();
 
     ui->Password_Length->setValue(15);//inital length of 15 characters
+
+    QDir logFileDirectory;
+    logFilePath = logFileDirectory.absoluteFilePath("C:/SE_EasyAccessFiles/PasswordVerificationLog.txt");
+    logThis(" - ACTION -- Application started.\n");
 }
 
 MainWindow::~MainWindow()
@@ -153,3 +158,23 @@ bool MainWindow::Requirements(QString password) {
     return true;
 }
 
+
+void MainWindow::logThis(QString messageToLog)
+{
+    QFile logFile(logFilePath);
+    if (logFile.open(QIODevice::Append)){
+        QTextStream logMessage(&logFile);
+        logMessage << formatTime() << messageToLog;
+        logFile.close();
+    }
+}
+
+
+QString MainWindow::formatTime()
+{
+    // Called at the beginning of each log entry
+    // retrieves current time, formats it into standard format, and returns as a string
+    QDateTime currentDT = QDateTime::currentDateTime();
+    QString formattedDateTime = currentDT.toString("yyyyMMdd_HH:mm:ss");
+    return formattedDateTime;
+}
