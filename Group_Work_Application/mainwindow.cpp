@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QCryptographicHash>
-#include <QFile>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QDateTime>
 
@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+    logThis(" - ACTION -- Application closed.\n");
 }
 
 // This is used to store common hashed passwords.
@@ -45,7 +46,7 @@ void MainWindow::loadCommonPasswords()
         return;
     }
 
-    qDebug() << "Common passwords file opened successfully";
+    logThis("Common passwords file opened successfully\n");
 
     // This used to read the file line by line and hash each password.
         QTextStream in(&file);
@@ -87,10 +88,12 @@ void MainWindow::hashFunction(QString password)
     if (commonHashes.contains(hashString))
     {
        QMessageBox::warning(this, tr("Result"), tr("The entered password is a common password."));
+       logThis("Password too common\n");
 
     } else
     {
         QMessageBox::information(this, tr("Result"), tr("The entered password is not a common password."));
+        logThis("Password '" + password + "' is verified\n");
     }
 }
 
