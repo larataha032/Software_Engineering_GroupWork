@@ -1,8 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QCryptographicHash>
-#include <QFile>
+#include <QFileDialog>
 #include <QMessageBox>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,11 +18,16 @@ MainWindow::MainWindow(QWidget *parent)
     loadCommonPasswords();
 
     ui->Password_Length->setValue(15);//inital length of 15 characters
+
+    QDir logFileDirectory;
+    logFilePath = logFileDirectory.absoluteFilePath("C:/SE_EasyAccessFiles/PasswordVerificationLog.txt");
+    logThis(" - ACTION -- Application started.\n");
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    logThis(" - ACTION -- Application closed.\n");
 }
 
 // This is used to store common hashed passwords.
@@ -40,7 +46,7 @@ void MainWindow::loadCommonPasswords()
         return;
     }
 
-    qDebug() << "Common passwords file opened successfully";
+    logThis("Common passwords file opened successfully\n");
 
     // This used to read the file line by line and hash each password.
         QTextStream in(&file);
@@ -82,10 +88,12 @@ void MainWindow::hashFunction(QString password)
     if (commonHashes.contains(hashString))
     {
        QMessageBox::warning(this, tr("Result"), tr("The entered password is a common password."));
+       logThis("Password too common\n");
 
     } else
     {
         QMessageBox::information(this, tr("Result"), tr("The entered password is not a common password."));
+        logThis("Password '" + password + "' is verified\n");
     }
 }
 
@@ -153,3 +161,23 @@ bool MainWindow::Requirements(QString password) {
     return true;
 }
 
+
+void MainWindow::logThis(QString messageToLog)
+{
+    QFile logFile(logFilePath);
+    if (logFile.open(QIODevice::Append)){
+        QTextStream logMessage(&logFile);
+        logMessage << formatTime() << messageToLog;
+        logFile.close();
+    }
+}
+
+
+QString MainWindow::formatTime()
+{
+    // Called at the beginning of each log entry
+    // retrieves current time, formats it into standard format, and returns as a string
+    QDateTime currentDT = QDateTime::currentDateTime();
+    QString formattedDateTime = currentDT.toString("yyyyMMdd_HH:mm:ss");
+    return formattedDateTime;
+}
